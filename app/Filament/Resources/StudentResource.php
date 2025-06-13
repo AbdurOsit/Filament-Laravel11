@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Card;
@@ -19,6 +20,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use stdClass;
 
 class StudentResource extends Resource
 {
@@ -33,7 +35,7 @@ class StudentResource extends Resource
                 Card::make()
                     ->schema([
                         TextInput::make('nis')->label('NIS')
-                        ->integer(),
+                            ->integer(),
                         TextInput::make('name')
                             ->label('Student Name')
                             ->required()
@@ -62,6 +64,16 @@ class StudentResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('No.')->state(
+                    static function (HasTable $livewire, stdClass $rowLoop): string {
+                        return (string) (
+                            $rowLoop->iteration +
+                            ($livewire->getTableRecordsPerPage() * (
+                                $livewire->getTablePage() - 1
+                            ))
+                        );
+                    }
+                ),
                 TextColumn::make('nis')->label('NIS'),
                 TextColumn::make('name')->label('Student Name'),
                 TextColumn::make('gender'),
@@ -97,5 +109,15 @@ class StudentResource extends Resource
             'create' => Pages\CreateStudent::route('/create'),
             'edit' => Pages\EditStudent::route('/{record}/edit'),
         ];
+    }
+
+    public static function getLabel(): ?string
+    {   
+        $locale = app()->getLocale();
+        if($locale == 'id'){
+            return 'Murid';
+        }else{
+            return 'Students';
+        }
     }
 }
