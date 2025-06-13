@@ -20,13 +20,13 @@ class PeriodeResource extends Resource
     protected static ?string $model = Periode::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    // protected static ?string $navigationLabel = 'Periode';
+    protected static ?string $navigationLabel = 'Periode';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                // TextInput::make('name')->required()
+                TextInput::make('name')->required()
             ]);
     }
 
@@ -34,7 +34,7 @@ class PeriodeResource extends Resource
     {
         return $table
             ->columns([
-                // TextColumn::make('periode')->label('Periode')
+                TextColumn::make('name')->label('Name Periode')
             ])
             ->filters([
                 //

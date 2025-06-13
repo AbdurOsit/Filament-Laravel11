@@ -17,7 +17,7 @@ class ManagePeriodes extends ManageRecords
         ];
     }
 
-    // public function getTitle() : string{
-    //     return 'Category Nilai';
-    // }
+    public function getTitle() : string{
+        return 'Category Nilai';
+    }
 }
