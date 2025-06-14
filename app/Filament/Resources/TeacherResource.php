@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TeacherResource\Pages;
 use App\Filament\Resources\TeacherResource\RelationManagers;
+use App\Filament\Resources\TeacherResource\RelationManagers\ClassroomRelationManager;
 use App\Models\Teacher;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
@@ -30,7 +31,7 @@ class TeacherResource extends Resource
         return $form
         ->schema([
                 Card::make()->schema([
-                    TextInput::make('nip'),
+                    TextInput::make('nip')->integer(),
                     TextInput::make('name')->required(),
                     TextInput::make('address'),
                     FileUpload::make('profile')->directory('teachers'),
@@ -53,6 +54,7 @@ class TeacherResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -64,7 +66,7 @@ class TeacherResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ClassroomRelationManager::class,
         ];
     }
 
