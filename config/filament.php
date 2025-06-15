@@ -57,6 +57,10 @@ return [
 
     'assets_path' => null,
 
+    'assets' => [
+    'css/app.css', // pastikan file CSS kamu dimuat
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Cache Path
