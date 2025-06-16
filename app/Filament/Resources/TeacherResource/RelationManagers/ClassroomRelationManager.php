@@ -5,6 +5,8 @@ namespace App\Filament\Resources\TeacherResource\RelationManagers;
 use App\Models\Classroom;
 use App\Models\Periode;
 use Filament\Forms;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -13,6 +15,8 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Set;
+use Illuminate\Support\Str;
 
 class ClassroomRelationManager extends RelationManager
 {
@@ -25,11 +29,37 @@ class ClassroomRelationManager extends RelationManager
                 Select::make('classrooms_id')
                     ->label('Select Class')
                     ->options(Classroom::all()->pluck('name', 'id'))
-                    ->searchable(),
-                Select::make('periode_id')
-                    ->label('Selec Periode')
-                    ->options(Periode::all()->pluck('name','id'))
                     ->searchable()
+                    ->relationship(name: 'classroom', titleAttribute: 'name')
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->reactive()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(fn(Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                        Hidden::make('slug'),
+                    ])
+                    ->createOptionAction(
+                        fn(Action $action) => $action
+                                            ->modalHeading('Add Classroom')
+                                            ->modalButton('Add Classroom')
+                                            ->modalWidth('3xl'),
+                    ),
+                Select::make('periode_id')
+                    ->label('Select Periode')
+                    ->options(Periode::all()->pluck('name', 'id'))
+                    ->searchable()
+                    ->relationship(name: 'periode', titleAttribute: 'name')
+                    ->createOptionForm([
+                        Forms\Components\TextInput::make('name')
+                            ->required(),
+                    ])
+                    ->createOptionAction(
+                        fn(Action $action) => $action
+                                            ->modalHeading('Add Periode')
+                                            ->modalButton('Add Periode')
+                                            ->modalWidth('3xl'),
+                    ),
             ]);
     }
 
@@ -39,7 +69,7 @@ class ClassroomRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\TextColumn::make('classroom.name'),
-                Tables\Columns\TextColumn::make('periodes.name'),
+                Tables\Columns\TextColumn::make('periode.name'),
                 ToggleColumn::make('is_open'),
             ])
             ->filters([
